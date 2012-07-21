@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TSGT GIS</string>
+    <string name="titleLoc">My Location</string>
+    <string name="titlePt">Add Point</string>
+    <string name="titleLine">Add Line</string>
+    <string name="titlePolygon">Add Area</string>
+    <string name="titleSave">Save</string>
+    <string name="titleLoad">Load Features</string>
+    <string name="titleSaveDialog">Create Feature</string>
+    <string name="titleNote">Note:</string>
+    <string name="titleSampleNote">Click Here To Enter Note</string>
+    <string name="titleDataMgr">DB Manager</string>
+</resources>

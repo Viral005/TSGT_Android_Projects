@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+        			
+	<item android:id="@+id/itemDropPoint" android:title="@string/titlePt"
+    android:icon="@drawable/flag_red" android:showAsAction="ifRoom"></item>
+	
+	<item android:id="@+id/itemDrawLine" android:title="@string/titleLine"
+    android:icon="@drawable/redline" android:showAsAction="ifRoom"></item>
+	
+	<item android:id="@+id/itemDrawPolygon" android:title="@string/titlePolygon"
+    android:icon="@drawable/redpolygon" android:showAsAction="ifRoom"></item>
+		
+	<item android:id="@+id/itemMyLocation" android:title="@string/titleLoc"
+    android:icon="@drawable/user" android:showAsAction="ifRoom"></item>
+	
+	<item android:id="@+id/itemManager" android:title="@string/titleDataMgr"
+	android:icon="@drawable/i_options" android:showAsAction="ifRoom"></item>
+		
+</menu>
