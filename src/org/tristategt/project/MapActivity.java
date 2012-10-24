@@ -1,5 +1,7 @@
 package org.tristategt.project;
 
+import java.io.File;
+
 import org.tristategt.common.CalloutLongPressListener;
 import org.tristategt.common.DBAction.FeaturesDBAdapter;
 import org.tristategt.common.Dialogs.DBManagerDialog;
@@ -14,6 +16,7 @@ import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -80,6 +83,7 @@ public class MapActivity extends Activity {
 		genericMapTouchListener = new GenericMapTouchListener(MapActivity.this, mMapView);
 		mMapView.setOnLongPressListener(calloutLongPressListener);
 		mMapView.setOnTouchListener(genericMapTouchListener);
+		createRequiredDirs();
     }
 
 	@Override 
@@ -221,5 +225,20 @@ public class MapActivity extends Activity {
 		layout.addView(noteView);
 
 		return layout;
+	}
+	
+	public void createRequiredDirs()
+	{
+		if (Environment.getExternalStorageState() == null) {
+			File fileBase = new File(Environment.getDataDirectory() + "/GIS_Cache");
+			if(!fileBase.exists()) {
+				fileBase.mkdirs();
+			}
+		}else if (Environment.getExternalStorageState() == null){
+			File fileBase = new File(Environment.getExternalStorageDirectory() + "/GIS_Cache");
+			if(!fileBase.exists()) {
+				fileBase.mkdirs();
+			}
+		}
 	}
 }
