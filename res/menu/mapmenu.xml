@@ -15,5 +15,11 @@
 	
 	<item android:id="@+id/itemManager" android:title="@string/titleDataMgr"
 	android:icon="@drawable/i_options" android:showAsAction="ifRoom"></item>
+	
+	<item android:id="@+id/itemAddStreet" android:title="@string/titleAddStreet"
+	android:icon="@drawable/i_options" android:showAsAction="ifRoom"></item>
+	
+	<item android:id="@+id/itemAddAerial" android:title="@string/titleAddAerial"
+	android:icon="@drawable/i_options" android:showAsAction="ifRoom"></item>
 		
 </menu>

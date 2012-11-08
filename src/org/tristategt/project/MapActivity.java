@@ -29,27 +29,32 @@ import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.LocationService;
 import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISLocalTiledLayer;
+import com.esri.android.map.ags.ArcGISTiledMapServiceLayer;
 
 
 public class MapActivity extends Activity {
 	
-	MapView mMapView;
-	ArcGISLocalTiledLayer gisLayers;
-	GraphicsLayer graphicsLayer, scratchGraphicsLayer;
-	LocationService ls;
-	final static double SEARCH_RADIUS = 5;
-	Menu myMenu;
-	FeaturesDBAdapter dbAdapter;
-	CreatePtNoteTouchListener drawPtTouchListener;
-	CreateLineNoteTouchListener drawLineTouchListener;
-	CreatePolygonNoteTouchListener drawPolygonTouchListener;
-	CalloutLongPressListener calloutLongPressListener;
-	GenericMapTouchListener genericMapTouchListener;
-	FragmentManager fm;
-	Drawable drawableBlueFlag, drawableRedFlag, drawableRedLine, drawableBlueLine, drawableRedPolygon, drawableBluePolygon;
-	TextView noteView;
-	View content;
-	Callout callout;
+	private File fileBase;
+	private Boolean createdDirs;
+	private MapView mMapView;
+	private ArcGISLocalTiledLayer gisLayers;
+	private ArcGISTiledMapServiceLayer bgLayerStreet, bgLayerAerial;
+	private GraphicsLayer graphicsLayer, scratchGraphicsLayer;
+	private LocationService ls;
+	private Menu myMenu;
+	private FeaturesDBAdapter dbAdapter;
+	private CreatePtNoteTouchListener drawPtTouchListener;
+	private CreateLineNoteTouchListener drawLineTouchListener;
+	private CreatePolygonNoteTouchListener drawPolygonTouchListener;
+	private CalloutLongPressListener calloutLongPressListener;
+	private GenericMapTouchListener genericMapTouchListener;
+	private FragmentManager fm;
+	private Drawable drawableBlueFlag, drawableRedFlag, drawableRedLine, drawableBlueLine, drawableRedPolygon, drawableBluePolygon;
+	private TextView noteView;
+	private View content;
+	private Callout callout;
+	private static final String aerialURL = "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer";
+	private static final String streetURL = "http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,16 +62,27 @@ public class MapActivity extends Activity {
         setContentView(R.layout.main);
 		
 		mMapView = (MapView)findViewById(R.id.map);
+		createdDirs = createRequiredDirs();
 		
 		callout = mMapView.getCallout();
 		content = createContent();
 		
 		graphicsLayer = new GraphicsLayer();
 		scratchGraphicsLayer = new GraphicsLayer();
-		gisLayers = new ArcGISLocalTiledLayer("file:///mnt/sdcard/GIS_Cache");
-		mMapView.addLayer(gisLayers);
-		mMapView.addLayer(scratchGraphicsLayer);
-		mMapView.addLayer(graphicsLayer);
+		bgLayerStreet = new ArcGISTiledMapServiceLayer(streetURL);
+		bgLayerAerial = new ArcGISTiledMapServiceLayer(aerialURL);
+				
+		//Add layer to the map if it exist else load base map
+		if(!createdDirs){
+			mMapView.addLayer(gisLayers);
+			mMapView.addLayer(scratchGraphicsLayer);
+			mMapView.addLayer(graphicsLayer);
+		}else{
+			mMapView.addLayer(bgLayerStreet);
+			mMapView.addLayer(scratchGraphicsLayer);
+			mMapView.addLayer(graphicsLayer);
+		}
+		
 		dbAdapter = new FeaturesDBAdapter(this);
 		
 		drawableBlueFlag = getResources().getDrawable(R.drawable.flag_blue);
@@ -83,7 +99,6 @@ public class MapActivity extends Activity {
 		genericMapTouchListener = new GenericMapTouchListener(MapActivity.this, mMapView);
 		mMapView.setOnLongPressListener(calloutLongPressListener);
 		mMapView.setOnTouchListener(genericMapTouchListener);
-		createRequiredDirs();
     }
 
 	@Override 
@@ -194,6 +209,18 @@ public class MapActivity extends Activity {
 			case R.id.itemManager:				
 				createDBManagerDialog();
 				break;
+			case R.id.itemAddAerial:
+				mMapView.addLayer(bgLayerAerial, 0);
+				if(mMapView.getLayerByURL(streetURL) != null){
+					mMapView.removeLayer(bgLayerStreet);
+				}
+				break;
+			case R.id.itemAddStreet:
+				mMapView.addLayer(bgLayerStreet, 0);
+				if(mMapView.getLayerByURL(aerialURL) != null){
+					mMapView.removeLayer(bgLayerAerial);
+				}
+				break;
 		}
 		return true;
 	}
@@ -227,18 +254,26 @@ public class MapActivity extends Activity {
 		return layout;
 	}
 	
-	public void createRequiredDirs()
+	public boolean createRequiredDirs()
 	{
 		if (Environment.getExternalStorageState() == null) {
-			File fileBase = new File(Environment.getDataDirectory() + "/GIS_Cache");
+			fileBase = new File(Environment.getDataDirectory() + "/GIS_Cache");
 			if(!fileBase.exists()) {
 				fileBase.mkdirs();
+				return true;
 			}
-		}else if (Environment.getExternalStorageState() == null){
-			File fileBase = new File(Environment.getExternalStorageDirectory() + "/GIS_Cache");
+		}else if (Environment.getExternalStorageState() != null){
+			fileBase = new File(Environment.getExternalStorageDirectory() + "/GIS_Cache");
 			if(!fileBase.exists()) {
 				fileBase.mkdirs();
+				return true;
 			}
+		}		
+		try{
+			gisLayers = new ArcGISLocalTiledLayer("file://" + fileBase.getAbsolutePath());
+		}catch(Exception e){
+			return true;
 		}
+		return false;
 	}
 }

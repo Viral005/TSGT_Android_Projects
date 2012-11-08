@@ -11,4 +11,6 @@
     <string name="titleNote">Note:</string>
     <string name="titleSampleNote">Click Here To Enter Note</string>
     <string name="titleDataMgr">DB Manager</string>
+    <string name="titleAddAerial">Aerial Background</string>
+    <string name="titleAddStreet">Street Background</string>
 </resources>
