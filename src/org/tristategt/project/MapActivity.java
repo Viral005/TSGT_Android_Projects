@@ -226,7 +226,7 @@ public class MapActivity extends Activity {
 	}
 	
 	private void createDBManagerDialog(){
-		FragmentTransaction ft = getFragmentManager().beginTransaction(); 
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		DBManagerDialog myDialog = DBManagerDialog.newInstance("Message");
 		myDialog.setDbAdapter(dbAdapter);
 		myDialog.setGraphicsLayer(graphicsLayer);
